@@ -1,0 +1,36 @@
+.dashboard {
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.add-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.primary-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.warning-btn {
+  background-color: #ffc107;
+}
+
+.success-btn {
+  background-color: #28a745;
+  color: white;
+}

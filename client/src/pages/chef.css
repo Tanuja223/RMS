@@ -1,0 +1,27 @@
+.chef-page {
+  padding: 100px 20px;
+  max-width: 800px;
+  margin: auto;
+}
+
+.chef-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  background-color: #fff7e6;
+}
+
+.chef-card button {
+  margin-top: 8px;
+  padding: 6px 14px;
+  border: none;
+  background-color: #ff9800;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.chef-card button:hover {
+  background-color: #e68900;
+}

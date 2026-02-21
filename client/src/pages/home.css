@@ -1,0 +1,249 @@
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ===== HEADER ===== */
+.header {
+  background-color: #2e8b57;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+}
+
+.logo {
+  color: white;
+  font-size: 28px;
+}
+
+/* NAV LINKS */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+}
+
+/* AUTH BUTTONS */
+.auth-btn {
+  border: 2px solid white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+  transition: all 0.3s ease;
+}
+
+.auth-btn:hover {
+  background-color: white;
+  color: #2e8b57;
+}
+
+/* HAMBURGER */
+.menu-toggle {
+  display: none;
+  font-size: 28px;
+  color: white;
+  cursor: pointer;
+}
+
+/* ===== HERO ===== */
+.hero {
+  margin-top: 80px;
+  height: 70vh;
+  background-image: url("https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-text {
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 30px 50px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.hero-text h2 {
+  color: white;
+  font-size: 36px;
+}
+
+.hero-text p {
+  color: #eee;
+  font-size: 18px;
+}
+
+/* ===== MENU ===== */
+.menu-section {
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 32px;
+  margin-bottom: 40px;
+}
+
+.menu-cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.menu-card {
+  width: 250px;
+}
+
+.menu-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.menu-card h3 {
+  margin-top: 12px;
+  font-size: 20px;
+}
+
+/* REMOVE UNDERLINE */
+.menu-card a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* ===== ABOUT ===== */
+.about {
+  background-color: #f5f5f5;
+  padding: 50px;
+  text-align: center;
+}
+
+.about h2 {
+  margin-bottom: 15px;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background-color: #2e8b57;
+  color: white;
+  text-align: center;
+  padding: 15px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .nav-container {
+    padding: 15px 20px;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 65px;
+    left: 0;
+    width: 100%;
+    background-color: #2e8b57;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 0;
+    display: none;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+}
+.profile-container {
+  position: relative;
+}
+
+/* Dropdown */
+.profile-container .profile-dropdown {
+  position: absolute;
+  right: 0;
+  top: 45px;
+  width: 220px;
+  background: #388e5c;
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  z-index: 999;
+}
+
+/* Header section (name + email) */
+.profile-container .profile-dropdown p {
+  margin: 0;
+}
+
+.profile-container .profile-dropdown p:last-of-type {
+  margin-bottom: 10px;   /* THIS creates space before My Orders */
+}
+
+/* Avatar */
+.profile-container .avatar-btn {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: white;
+  color: #388e5c;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* My Orders button */
+.profile-container .orders-btn {
+  width: 100%;
+  padding: 8px;
+  margin-top: 0;          /* remove large margin */
+  background: white;
+  color: #388e5c;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Logout button */
+.profile-container .logout-btn {
+  width: 100%;
+  padding: 8px;
+  margin-top: 10px;
+  background: white;
+  color: #388e5c;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}

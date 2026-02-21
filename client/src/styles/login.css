@@ -1,0 +1,82 @@
+.login-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.login-card {
+  background: white;
+  padding: 35px 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  width: 320px;
+  text-align: center;
+}
+
+.login-card h2 {
+  margin-bottom: 20px;
+  color: #388e5c;
+}
+
+/* input fields */
+.login-card input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+}
+
+.login-card input:focus {
+  border-color: #388e5c;
+}
+
+/* login button */
+.login-card button {
+  width: 100%;
+  padding: 12px;
+  background: #388e5c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.login-card button:hover {
+  background: #2e7d32;
+}
+
+/* register link */
+.login-card a {
+  color: #388e5c;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.login-card a:hover {
+  text-decoration: underline;
+}
+.password-container {
+  position: relative;
+  width: 100%;
+}
+
+.password-container input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+}

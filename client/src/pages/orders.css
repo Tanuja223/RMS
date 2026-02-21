@@ -1,0 +1,39 @@
+.orders-page {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+}
+
+.order-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.order-card {
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.status {
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+.status.pending {
+  color: orange;
+}
+
+.status.preparing {
+  color: blue;
+}
+
+.status.served {
+  color: green;
+}
+
+.status.paid {
+  color: purple;
+}
