@@ -1,10 +1,10 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:4300/api"
+  baseURL: process.env.REACT_APP_API_URL + "/api"
 });
 
-// ✅ ADD THIS BLOCK (VERY IMPORTANT)
+// Attach token automatically
 API.interceptors.request.use(
   config => {
     const token = localStorage.getItem("token");
@@ -16,7 +16,7 @@ API.interceptors.request.use(
   err => Promise.reject(err)
 );
 
-// 🔥 AUTO LOGOUT ON TOKEN EXPIRY
+// Auto logout on 401
 API.interceptors.response.use(
   res => res,
   err => {
