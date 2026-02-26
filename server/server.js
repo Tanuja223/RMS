@@ -5,7 +5,9 @@ const orderRoutes = require("./routes/order.routes");
 const app = express();
 const cron = require("node-cron");
 const db = require("./config/db");
+import cors from "cors";
 
+app.use(cors());
 // run every day at midnight
 cron.schedule("0 0 * * *", async () => {
   try {
@@ -22,11 +24,7 @@ cron.schedule("0 0 * * *", async () => {
 });
 
 
-/* 🔥 ENABLE CORS */
-app.use(cors({
-  origin: "http://localhost:3000",
-  credentials: true
-}));
+app.use(cors());
 
 app.use(express.json());
 
