@@ -11,7 +11,12 @@ const db = require("./config/db");
 const app = express();
 
 // ✅ CORS (only once)
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "https://rms-bice.vercel.app"
+  ]
+}));
 
 // JSON middleware
 app.use(express.json());

@@ -9,6 +9,11 @@ const db = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
+
+  // 🔴 ADD THIS (Clever Cloud requires SSL)
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 // Test connection
