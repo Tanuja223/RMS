@@ -45,10 +45,9 @@ const Register = () => {
       navigate("/login");
 
     } catch (err) {
-
-      alert(err.response?.data?.message || "Registration failed");
-
-    }
+  console.error("REGISTER ERROR:", err);  // ✅ ADD THIS
+  res.status(500).json({ message: "Server error" });
+}
   };
 
   return (
