@@ -63,31 +63,38 @@ router.post("/login", async (req, res) => {
   }
 
 });
-
 router.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
+  try {
+    console.log("BODY:", req.body);
 
-  if (!name || !email || !password) {
-    return res.status(400).json({ message: "All fields required" });
-  }
+    const { name, email, password } = req.body;
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  const sql = `
-    INSERT INTO users (name, email, password, role)
-    VALUES (?, ?, ?, 'customer')
-  `;
-
-  db.query(sql, [name, email, hashedPassword], (err) => {
-    if (err) {
-      if (err.code === "ER_DUP_ENTRY") {
-        return res.status(400).json({ message: "Email already exists" });
-      }
-      return res.status(500).json(err);
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields required" });
     }
 
-    res.json({ message: "Customer registered successfully" });
-  });
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const sql = `
+      INSERT INTO users (name, email, password, role)
+      VALUES (?, ?, ?, 'customer')
+    `;
+
+    await db.promise().query(sql, [name, email, hashedPassword]);
+
+    res.status(201).json({
+      message: "Customer registered successfully"
+    });
+
+  } catch (err) {
+    console.error("REGISTER ERROR:", err);  // 🔥 THIS WILL SHOW REAL ERROR
+
+    if (err.code === "ER_DUP_ENTRY") {
+      return res.status(400).json({ message: "Email already exists" });
+    }
+
+    res.status(500).json({ error: err.message });
+  }
 });
 const { verifyToken } = require("../middleware/auth.middleware");
 

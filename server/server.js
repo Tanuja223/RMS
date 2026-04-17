@@ -18,6 +18,7 @@ app.use(cors({
   ]
 }));
 
+
 // JSON middleware
 app.use(express.json());
 
