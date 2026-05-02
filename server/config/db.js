@@ -1,16 +1,8 @@
-import mysql from "mysql2/promise";
+import pkg from 'pg';
+const { Pool } = pkg;
 
-const db = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-
-  // 🔴 ADD THIS (Clever Cloud requires SSL)
+const db = new Pool({
+  connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   }
@@ -19,11 +11,11 @@ const db = mysql.createPool({
 // Test connection
 (async () => {
   try {
-    const connection = await db.getConnection();
-    console.log("✅ MySQL Connected Successfully");
-    connection.release();
+    const client = await db.connect();
+    console.log("✅ PostgreSQL Connected Successfully");
+    client.release();
   } catch (err) {
-    console.error("❌ MySQL Connection Failed:", err);
+    console.error("❌ PostgreSQL Connection Failed:", err);
   }
 })();
 
