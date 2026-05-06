@@ -45,7 +45,7 @@ router.post(
 
         total += menu.price * item.quantity;
 
-        await db.promise().query(
+        await db.query(
           `INSERT INTO order_items (order_id, menu_item_id, quantity, price)
            VALUES (?, ?, ?, ?)`,
           [order_id, item.menu_item_id, item.quantity, menu.price]
