@@ -29,15 +29,15 @@ function ChefDashboard() {
 
   console.log("Updating:", orderId, status);
 
-  axios.patch(
-    `http://localhost:4300/api/orders/${orderId}/status`,
-    { status },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+ axios.patch(
+  `${process.env.REACT_APP_API_URL}/api/orders/${orderId}/status`,
+  { status },
+  {
+    headers: {
+      Authorization: `Bearer ${token}`
     }
-  )
+  }
+)
   .then(res => {
     console.log("Update success:", res.data);
     fetchOrders();
