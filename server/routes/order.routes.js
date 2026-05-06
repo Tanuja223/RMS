@@ -22,7 +22,7 @@ router.post(
     }
 
     try {
-      const [orderResult] = await db.promise().query(
+      const [orderResult] = await db.query(
         `INSERT INTO orders (table_id, customer_id, status, total_price)
          VALUES (?, ?, 'pending', 0)`,
         [table_id, customer_id]
@@ -32,7 +32,7 @@ router.post(
       let total = 0;
 
       for (const item of items) {
-        const [[menu]] = await db.promise().query(
+        const [[menu]] = await db.query(
           `SELECT price FROM menuitems WHERE id = ?`,
           [item.menu_item_id]
         );
@@ -52,7 +52,7 @@ router.post(
         );
       }
 
-      await db.promise().query(
+      await db.query(
         `UPDATE orders SET total_price = ? WHERE id = ?`,
         [total, order_id]
       );
@@ -201,7 +201,7 @@ router.get(
     const customer_id = req.user.id;
 
     try {
-      const [orders] = await db.promise().query(
+      const [orders] = await db.query(
         `SELECT 
            o.id AS order_id,
            o.status,
