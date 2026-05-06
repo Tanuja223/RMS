@@ -10,14 +10,14 @@ const db = require("./config/db");
 
 const app = express();
 
-// ✅ CORS (only once)
 app.use(cors({
   origin: [
     "http://localhost:3000",
-    "https://rms-bice.vercel.app"
-  ]
+    "https://rms-bice.vercel.app",
+    "https://rms-e0ug84vjj-tanuja223s-projects.vercel.app"
+  ],
+  credentials: true
 }));
-
 
 // JSON middleware
 app.use(express.json());
