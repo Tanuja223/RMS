@@ -4,83 +4,57 @@ const { verifyToken, authorizeRoles } = require("../middleware/auth.middleware")
 
 const router = express.Router();
 
-/* =====================================================
-   CUSTOMER – PLACE ORDER
-   POST /api/orders/place
-===================================================== */
-router.post(
-  "/place",
-  verifyToken,
-  authorizeRoles("customer"),
-  async (req, res) => {
-    const { items } = req.body;
-    const customer_id = req.user.id;
-    const table_id = 1;
+// CUSTOMER – PLACE ORDER
+router.post("/place", verifyToken, authorizeRoles("customer"), async (req, res) => {
+  const { items } = req.body;
+  const customer_id = req.user.id;
+  const table_id = 1;
 
-    if (!items || items.length === 0) {
-      return res.status(400).json({ message: "No items provided" });
-    }
+  if (!items || items.length === 0) {
+    return res.status(400).json({ message: "No items provided" });
+  }
 
-    try {
-      const [orderResult] = await db.query(
-        `INSERT INTO orders (table_id, customer_id, status, total_price)
-         VALUES (?, ?, 'pending', 0)`,
-        [table_id, customer_id]
+  try {
+    const [orderResult] = await db.query(
+      `INSERT INTO orders (table_id, customer_id, status, total_price) VALUES (?, ?, 'pending', 0)`,
+      [table_id, customer_id]
+    );
+
+    const order_id = orderResult.insertId;
+    let total = 0;
+
+    for (const item of items) {
+      const [[menu]] = await db.query(
+        `SELECT price FROM menuitems WHERE id = ?`,
+        [item.menu_item_id]
       );
 
-      const order_id = orderResult.insertId;
-      let total = 0;
-
-      for (const item of items) {
-        const [[menu]] = await db.query(
-          `SELECT price FROM menuitems WHERE id = ?`,
-          [item.menu_item_id]
-        );
-
-        if (!menu) {
-          return res.status(400).json({
-            message: `Menu item not found: ${item.menu_item_id}`
-          });
-        }
-
-        total += menu.price * item.quantity;
-
-        await db.query(
-          `INSERT INTO order_items (order_id, menu_item_id, quantity, price)
-           VALUES (?, ?, ?, ?)`,
-          [order_id, item.menu_item_id, item.quantity, menu.price]
-        );
+      if (!menu) {
+        return res.status(400).json({ message: `Menu item not found: ${item.menu_item_id}` });
       }
 
+      total += menu.price * item.quantity;
+
       await db.query(
-        `UPDATE orders SET total_price = ? WHERE id = ?`,
-        [total, order_id]
+        `INSERT INTO order_items (order_id, menu_item_id, quantity, price) VALUES (?, ?, ?, ?)`,
+        [order_id, item.menu_item_id, item.quantity, menu.price]
       );
-
-      res.status(201).json({
-        message: "Order placed successfully",
-        order_id,
-        total_price: total
-      });
-
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: "Order failed" });
     }
+
+    await db.query(`UPDATE orders SET total_price = ? WHERE id = ?`, [total, order_id]);
+
+    res.status(201).json({ message: "Order placed successfully", order_id, total_price: total });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Order failed" });
   }
-);
+});
 
-
-/* =====================================================
-   WAITER – VIEW ACTIVE ORDERS
-   GET /api/orders/waiter
-===================================================== */
-router.get(
-  "/waiter",
-  verifyToken,
-  authorizeRoles("waiter"),
-  (req, res) => {
-    const sql = `
+// WAITER – VIEW ACTIVE ORDERS
+router.get("/waiter", verifyToken, authorizeRoles("waiter"), async (req, res) => {
+  try {
+    const [results] = await db.query(`
       SELECT 
         o.id AS order_id,
         o.status,
@@ -92,25 +66,18 @@ router.get(
       WHERE o.status IN ('pending', 'preparing', 'served')
       GROUP BY o.id
       ORDER BY o.created_at DESC
-    `;
-
-    db.query(sql, (err, results) => {
-      if (err) return res.status(500).json(err);
-      res.json(results);
-    });
+    `);
+    res.json(results);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Database error" });
   }
-);
+});
 
-/* =====================================================
-   CHEF – VIEW KITCHEN ORDERS
-   GET /api/orders/chef
-===================================================== */
-router.get(
-  "/chef",
-  verifyToken,
-  authorizeRoles("chef"),
-  (req, res) => {
-    const sql = `
+// CHEF – VIEW KITCHEN ORDERS
+router.get("/chef", verifyToken, authorizeRoles("chef"), async (req, res) => {
+  try {
+    const [results] = await db.query(`
       SELECT 
         o.id AS order_id,
         o.status,
@@ -121,132 +88,102 @@ router.get(
       JOIN menuitems mi ON oi.menu_item_id = mi.id
       WHERE o.status IN ('pending', 'preparing')
       ORDER BY o.created_at ASC
-    `;
-
-    db.query(sql, (err, results) => {
-      if (err) return res.status(500).json(err);
-      res.json(results);
-    });
+    `);
+    res.json(results);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Database error" });
   }
-);
-router.patch("/:id/status", verifyToken, (req, res) => {
+});
 
+// UPDATE ORDER STATUS
+router.patch("/:id/status", verifyToken, async (req, res) => {
   const orderId = req.params.id;
   const { status } = req.body;
 
   console.log("Order:", orderId, "Status:", status);
 
-  db.query(
-    "UPDATE orders SET status = ? WHERE id = ?",
-    [status, orderId],
-    (err, result) => {
-
-      if (err) {
-        console.error(err);
-        return res.status(500).json("Database error");
-      }
-
-      res.json("Status updated successfully");
-    }
-  );
+  try {
+    await db.query("UPDATE orders SET status = ? WHERE id = ?", [status, orderId]);
+    res.json("Status updated successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Database error");
+  }
 });
 
+// WAITER – CHECKOUT ORDER
+router.post("/:id/checkout", verifyToken, authorizeRoles("waiter"), async (req, res) => {
+  const orderId = req.params.id;
 
-/* =====================================================
-   WAITER – CHECKOUT ORDER
-   POST /api/orders/:id/checkout
-===================================================== */
-router.post(
-  "/:id/checkout",
-  verifyToken,
-  authorizeRoles("waiter"),
-  (req, res) => {
-    const orderId = req.params.id;
-
-    const billSql = `
+  try {
+    const [bill] = await db.query(`
       SELECT SUM(oi.quantity * mi.price) AS total
       FROM order_items oi
       JOIN menuitems mi ON oi.menu_item_id = mi.id
       WHERE oi.order_id = ?
-    `;
+    `, [orderId]);
 
-    db.query(billSql, [orderId], (err, bill) => {
-      if (err) return res.status(500).json(err);
+    const total = bill[0].total || 0;
 
-      const total = bill[0].total || 0;
+    await db.query(
+      "UPDATE orders SET status = 'paid', total_price = ? WHERE id = ?",
+      [total, orderId]
+    );
 
-      db.query(
-        "UPDATE orders SET status = 'paid', total_price = ? WHERE id = ?",
-        [total, orderId],
-        () => {
-          res.json({
-            message: "Checkout completed",
-            order_id: orderId,
-            total
-          });
-        }
-      );
-    });
+    res.json({ message: "Checkout completed", order_id: orderId, total });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Checkout failed" });
   }
-);
-/* =====================================================
-   CUSTOMER – VIEW THEIR ORDERS
-   GET /api/orders/customer
-===================================================== */
-router.get(
-  "/customer",
-  verifyToken,
-  authorizeRoles("customer"),
-  async (req, res) => {
-    const customer_id = req.user.id;
+});
 
-    try {
-      const [orders] = await db.query(
-        `SELECT 
-           o.id AS order_id,
-           o.status,
-           o.total_price,
-           o.created_at,
-           mi.name,
-           oi.quantity,
-           oi.price
-         FROM orders o
-         JOIN order_items oi ON o.id = oi.order_id
-         JOIN menuitems mi ON oi.menu_item_id = mi.id
-         WHERE o.customer_id = ?
-         ORDER BY o.created_at DESC`,
-        [customer_id]
-      );
+// CUSTOMER – VIEW THEIR ORDERS
+router.get("/customer", verifyToken, authorizeRoles("customer"), async (req, res) => {
+  const customer_id = req.user.id;
 
-      // Group items by order
-      const grouped = {};
+  try {
+    const [orders] = await db.query(`
+      SELECT 
+        o.id AS order_id,
+        o.status,
+        o.total_price,
+        o.created_at,
+        mi.name,
+        oi.quantity,
+        oi.price
+      FROM orders o
+      JOIN order_items oi ON o.id = oi.order_id
+      JOIN menuitems mi ON oi.menu_item_id = mi.id
+      WHERE o.customer_id = ?
+      ORDER BY o.created_at DESC
+    `, [customer_id]);
 
-      orders.forEach(row => {
-        if (!grouped[row.order_id]) {
-          grouped[row.order_id] = {
-            order_id: row.order_id,
-            status: row.status,
-            total_price: row.total_price,
-            created_at: row.created_at,
-            items: []
-          };
-        }
-
-        grouped[row.order_id].items.push({
-          name: row.name,
-          quantity: row.quantity,
-          price: row.price
-        });
+    const grouped = {};
+    orders.forEach(row => {
+      if (!grouped[row.order_id]) {
+        grouped[row.order_id] = {
+          order_id: row.order_id,
+          status: row.status,
+          total_price: row.total_price,
+          created_at: row.created_at,
+          items: []
+        };
+      }
+      grouped[row.order_id].items.push({
+        name: row.name,
+        quantity: row.quantity,
+        price: row.price
       });
+    });
 
-      res.json(Object.values(grouped));
+    res.json(Object.values(grouped));
 
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: "Failed to load orders" });
-    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to load orders" });
   }
-);
-
+});
 
 module.exports = router;

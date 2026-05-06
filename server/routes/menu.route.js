@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../config/db');
 
 // GET ALL MENU ITEMS
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const sql = `
     SELECT 
       menu_items.id,
@@ -15,13 +15,13 @@ router.get('/', (req, res) => {
     WHERE menu_items.is_available = true
   `;
 
-  db.query(sql, (err, results) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ message: 'Database error' });
-    }
+  try {
+    const [results] = await db.query(sql);
     res.json(results);
-  });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Database error' });
+  }
 });
 
 module.exports = router;
