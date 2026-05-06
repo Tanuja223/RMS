@@ -10,7 +10,7 @@ function WaiterDashboard() {
   // 🔥 FETCH ORDERS FUNCTION
   const fetchOrders = () => {
     axios
-      .get("http://localhost:4300/api/orders/waiter", {
+      .get(`${process.env.REACT_APP_API_URL}/api/orders/waiter`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -26,9 +26,9 @@ const handleCheckout = (orderId) => {
 
   axios
     .post(
-      `http://localhost:4300/api/orders/${orderId}/checkout`,
+      `${process.env.REACT_APP_API_URL}/api/orders/${orderId}/checkout`,
       {},
-      {
+      { 
         headers: {
           Authorization: `Bearer ${token}`
         }

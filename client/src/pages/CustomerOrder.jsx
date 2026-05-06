@@ -38,7 +38,7 @@ function CustomerOrder() {
   /* 📦 FETCH MENU */
   useEffect(() => {
     axios
-      .get(`http://localhost:4300/api/menuitems/${category}`)
+      .get(`${process.env.REACT_APP_API_URL}/api/menuitems/${category}`)
       .then(res => {
 
         setItems(res.data);

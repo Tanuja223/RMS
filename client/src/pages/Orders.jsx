@@ -10,7 +10,7 @@ function Orders() {
     const token = localStorage.getItem("token");
 
     axios
-      .get("http://localhost:4300/api/orders/customer", {
+      .get(`${process.env.REACT_APP_API_URL}/api/orders/customer`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
