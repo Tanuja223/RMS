@@ -4,14 +4,13 @@ const jwt = require("jsonwebtoken");
 const db = require("../config/db");
 
 const router = express.Router();
+
 router.post("/login", async (req, res) => {
-
   try {
-
     const { email, password } = req.body;
 
-    // Fetch user including password
-    const [rows] = await db.promise().query(
+    // Fetch user
+    const [rows] = await db.query(
       "SELECT id, name, email, password, role FROM users WHERE email = ?",
       [email]
     );
@@ -53,16 +52,14 @@ router.post("/login", async (req, res) => {
     });
 
   } catch (err) {
-
     console.error(err);
 
     res.status(500).json({
       message: "Server error"
     });
-
   }
-
 });
+
 router.post("/register", async (req, res) => {
   try {
     console.log("BODY:", req.body);
@@ -70,7 +67,9 @@ router.post("/register", async (req, res) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "All fields required" });
+      return res.status(400).json({
+        message: "All fields required"
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -80,25 +79,30 @@ router.post("/register", async (req, res) => {
       VALUES (?, ?, ?, 'customer')
     `;
 
-    await db.promise().query(sql, [name, email, hashedPassword]);
+    await db.query(sql, [name, email, hashedPassword]);
 
     res.status(201).json({
       message: "Customer registered successfully"
     });
 
   } catch (err) {
-    console.error("REGISTER ERROR:", err);  // 🔥 THIS WILL SHOW REAL ERROR
+    console.error("REGISTER ERROR:", err);
 
     if (err.code === "ER_DUP_ENTRY") {
-      return res.status(400).json({ message: "Email already exists" });
+      return res.status(400).json({
+        message: "Email already exists"
+      });
     }
 
-    res.status(500).json({ error: err.message });
+    res.status(500).json({
+      error: err.message
+    });
   }
 });
+
 const { verifyToken } = require("../middleware/auth.middleware");
 
-// 🔥 GET LOGGED IN USER INFO
+// GET LOGGED IN USER INFO
 router.get("/me", verifyToken, (req, res) => {
   res.json({
     id: req.user.id,
@@ -109,4 +113,3 @@ router.get("/me", verifyToken, (req, res) => {
 });
 
 module.exports = router;
-
