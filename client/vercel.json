@@ -1,5 +1,5 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
-  ]
+  "buildCommand": "cd client && npm run build",
+  "outputDirectory": "client/build",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

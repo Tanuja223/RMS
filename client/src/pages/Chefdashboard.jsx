@@ -9,7 +9,7 @@ function ChefDashboard() {
 
   const fetchOrders = () => {
     axios
-      .get("http://localhost:4300/api/orders/chef", {
+      .get(`${process.env.REACT_APP_API_URL}/api/orders/chef`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
